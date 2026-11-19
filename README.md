@@ -239,23 +239,44 @@ Example:
 
 ## Step 8 — Verify end to end
 
-Drop a self-contained challenge into `~/ctf/` and let the agent solve it:
+Before pointing the agent at a real box, confirm the whole stack works on a tiny,
+self-contained challenge — no network or target host needed. This repo includes one at
+[`challenges/intro-crypto`](challenges/intro-crypto): a flag wrapped in three common encoding
+layers (ROT13 → Base64 → hex).
 
-```
-~/ctf/
-  CLAUDE.md
-  intro-crypto/
-    challenge.md      # describes the task + flag format
-    cipher.txt        # a flag wrapped in hex -> base64 -> ROT13
-```
+1. Copy the challenge into your working area and make sure your `CLAUDE.md` is one level up:
 
-```bash
-cd ~/ctf/intro-crypto
-claude
-# then: "Solve the challenge in this folder. The flag format is flag{...}."
-```
+   ```bash
+   cp CLAUDE.md ~/ctf/CLAUDE.md                         # if not already there
+   cp -r challenges/intro-crypto ~/ctf/intro-crypto
+   ```
 
-If it reads the files, identifies the encoding layers, and returns the flag, the setup works.
+   Resulting layout:
+   ```
+   ~/ctf/
+     CLAUDE.md
+     intro-crypto/
+       challenge.md      # the task + flag format
+       cipher.txt        # the encoded flag
+   ```
+
+2. Run the agent from inside the challenge folder:
+
+   ```bash
+   cd ~/ctf/intro-crypto
+   claude
+   ```
+
+3. At the prompt, ask it to solve:
+
+   ```
+   Solve the challenge in this folder. The flag format is flag{...}.
+   ```
+
+**Expected result:** the agent reads `challenge.md`, inspects `cipher.txt`, recognizes the
+hex → Base64 → ROT13 layering, reverses it, and returns `flag{w3lc0me_to_cl4ude_ctf}`. If it
+gets there, your install, skills, plugin, and `CLAUDE.md` are all wired up correctly and you're
+ready for real rooms.
 
 ---
 
