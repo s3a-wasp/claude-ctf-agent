@@ -197,11 +197,12 @@ afterward; you should then see a `pentest` skill in the skills list.
 ## Step 7 — Add a CLAUDE.md for method and scope control
 
 `CLAUDE.md` is standing instructions the agent reads automatically. Mine makes it triage before
-going deep, keep notes, write solve scripts, and — critically — **refuse any pentest target not
-listed in that engagement's `scope.txt`**. Keep it at `~/ctf/CLAUDE.md` so it applies to every
-challenge subfolder.
+going deep, keep notes, write solve scripts, keep token/context use low, hand blocked
+brute-force steps back to me, and — critically — **refuse any pentest target not listed in that
+engagement's `scope.txt`**. Keep it at `~/ctf/CLAUDE.md` so it applies to every challenge
+subfolder.
 
-Minimal example:
+Example:
 
 ```markdown
 # CTF & Pentest Assistant — Standing Instructions
@@ -217,7 +218,24 @@ Minimal example:
 3. Form a hypothesis, test it, record results (including dead ends) in `notes.md`.
 4. Put reusable solve logic in `solve.py` (pwntools / requests).
 5. Stop at the flag (write it to `flag.txt`) or after ~5 failed approaches — then summarize.
+
+## Keep token/context usage low
+- Send large tool output to a FILE, then read back only the relevant lines
+  (`nmap ... -oN scan.txt` then `grep`; `ffuf ... -o out.json`). Never dump full
+  scans or wordlist runs into the chat.
+- Start with small, fast scans and short wordlists; escalate only when justified.
+- Don't re-run a scan already saved — re-read the file. Keep `notes.md` as running
+  memory so context can be cleared without losing progress.
+
+## Blocked tools
+- If a brute-force / credential tool (e.g. hydra, ffuf) is blocked, don't grind through
+  slow curl/paramiko loops silently — pause and hand me that one step with the exact
+  command to run, then continue once I paste back the result.
 ```
+
+> Note: tools run through the hackingtool plugin return their full output into the
+> conversation, so the "send output to a file" rule mainly helps for tools the agent runs
+> directly in bash. For plugin-run tools, keeping scans narrow is what limits token use.
 
 ## Step 8 — Verify end to end
 
